@@ -23,7 +23,7 @@ use Symfony\Component\Mime\MessageConverter;
 class PulseSendTransport extends AbstractTransport
 {
     /** Headers the API sets itself, or that this transport reads instead of forwarding. */
-    private const array BYPASSED_HEADERS = [
+    private const BYPASSED_HEADERS = [
         'from', 'to', 'cc', 'bcc', 'subject', 'reply-to', 'sender', 'return-path', 'message-id', 'date',
         'mime-version', 'content-type', 'content-transfer-encoding', 'content-disposition', 'dkim-signature', 'received',
         'x-tag', 'pulsesend-idempotency-key',
