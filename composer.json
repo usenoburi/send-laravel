@@ -1,0 +1,50 @@
+{
+    "name": "pulsesend/pulsesend-laravel",
+    "description": "PulseSend for Laravel: a mail transport, a facade and webhook events.",
+    "keywords": ["pulsesend", "laravel", "mail", "email", "transactional", "webhooks"],
+    "homepage": "https://pulse-send.jiordiviera.me",
+    "license": "MIT",
+    "type": "library",
+    "require": {
+        "php": "^8.2",
+        "illuminate/http": "^11.0 || ^12.0 || ^13.0",
+        "illuminate/support": "^11.0 || ^12.0 || ^13.0",
+        "pulsesend/pulsesend-php": "^0.1",
+        "symfony/mailer": "^7.0 || ^8.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0 || ^10.0 || ^11.0",
+        "pestphp/pest": "^3.0 || ^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PulseSend\\Laravel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PulseSend\\Laravel\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PulseSend\\Laravel\\PulseSendServiceProvider"
+            ],
+            "aliases": {
+                "PulseSend": "PulseSend\\Laravel\\Facades\\PulseSend"
+            }
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
