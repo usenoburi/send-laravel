@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PulseSend\Laravel\Transport;
 
+use Closure;
 use PulseSend\Client;
 use PulseSend\Exception\PulseSendException;
 use Symfony\Component\Mailer\Envelope;
@@ -30,13 +31,26 @@ class PulseSendTransport extends AbstractTransport
     ];
 
     /**
+     * The client is resolved at the first send, so an app without a key can
+     * still build its mailers: only an actual send needs PULSESEND_API_KEY.
+     *
+     * @param  Client|Closure(): Client  $pulsesend
      * @param  array<string, mixed>  $config
      */
     public function __construct(
-        protected Client $pulsesend,
+        protected Client|Closure $pulsesend,
         protected array $config = [],
     ) {
         parent::__construct();
+    }
+
+    protected function client(): Client
+    {
+        if ($this->pulsesend instanceof Closure) {
+            $this->pulsesend = ($this->pulsesend)();
+        }
+
+        return $this->pulsesend;
     }
 
     protected function doSend(SentMessage $message): void
@@ -80,8 +94,10 @@ class PulseSendTransport extends AbstractTransport
             'attachments' => $this->attachments($email),
         ], static fn (mixed $value): bool => $value !== null && $value !== []);
 
+        $client = $this->client();
+
         try {
-            $result = $this->pulsesend->emails->send($payload, $options);
+            $result = $client->emails->send($payload, $options);
         } catch (PulseSendException $exception) {
             throw new TransportException(
                 sprintf('Request to the PulseSend API failed. Reason: %s', $exception->getMessage()),

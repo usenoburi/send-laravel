@@ -37,12 +37,18 @@ final class PulseSendServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerPublishing();
 
-        Mail::extend('pulsesend', fn (array $config = []) => new PulseSendTransport($this->app->make(Client::class), $config['options'] ?? []));
+        Mail::extend('pulsesend', fn (array $config = []) => new PulseSendTransport(fn (): Client => $this->app->make(Client::class), $config['options'] ?? []));
     }
 
     private function registerRoutes(): void
     {
-        if (! config('pulsesend.routes')) {
+        // null (default): the webhook route exists only once a signing secret is set.
+        $routes = config('pulsesend.routes');
+        $enabled = $routes === null || $routes === ''
+            ? filled(config('pulsesend.webhook.secret'))
+            : filter_var($routes, FILTER_VALIDATE_BOOL);
+
+        if (! $enabled) {
             return;
         }
 

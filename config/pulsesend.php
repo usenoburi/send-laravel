@@ -31,13 +31,13 @@ return [
     | PulseSend Routes
     |--------------------------------------------------------------------------
     |
-    | This option determines whether the package registers its routes, such
-    | as the webhook handler. You may disable this when handling incoming
-    | webhooks yourself or when the routes are not needed at all.
+    | Whether the package registers its webhook route. By default (null) it
+    | does so only when PULSESEND_WEBHOOK_SECRET is set, so an app that
+    | doesn't use webhooks exposes nothing. true or false forces it.
     |
     */
 
-    'routes' => env('PULSESEND_ROUTES', true),
+    'routes' => env('PULSESEND_ROUTES'),
 
     /*
     |--------------------------------------------------------------------------

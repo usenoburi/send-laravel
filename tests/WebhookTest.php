@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use PulseSend\Laravel\Events\EmailBounced;
 use PulseSend\Laravel\Events\EmailDelivered;
 use PulseSend\Laravel\Events\WebhookReceived;
+use PulseSend\Laravel\Tests\TestCase;
 use PulseSend\Webhook;
 
 function callWebhook(string $body, ?string $signature = null)
@@ -49,6 +50,31 @@ it('answers 200 to an unknown type and 400 to a bad body', function () {
     callWebhook('not json')->assertStatus(400);
 
     Event::assertDispatched(WebhookReceived::class, 1);
+});
+
+it('has no route by default without a secret', function () {
+    TestCase::$routes = null;
+    $this->refreshApplication();
+
+    callWebhook('{"type":"email.delivered"}')->assertNotFound();
+});
+
+it('registers the route by default once a secret is set', function () use ($body) {
+    TestCase::$routes = null;
+    TestCase::$webhookSecret = 'whsec_test';
+    $this->refreshApplication();
+    Event::fake();
+
+    callWebhook($body, Webhook::sign($body, 'whsec_test'))->assertOk();
+    Event::assertDispatched(EmailDelivered::class);
+});
+
+it('can be turned off even with a secret', function () {
+    TestCase::$routes = false;
+    TestCase::$webhookSecret = 'whsec_test';
+    $this->refreshApplication();
+
+    callWebhook('{"type":"email.delivered"}')->assertNotFound();
 });
 
 it('sits under the configured path and outside CSRF', function () {

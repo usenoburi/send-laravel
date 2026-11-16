@@ -7,7 +7,10 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Headers;
+use Illuminate\Mail\Mailer;
 use Illuminate\Support\Facades\Mail;
+use PulseSend\Client;
+use PulseSend\Laravel\Exceptions\ApiKeyIsMissing;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mime\Part\DataPart;
 
@@ -100,4 +103,15 @@ it('reports API errors as transport errors', function () {
 
     expect(fn () => Mail::raw('Hello', fn ($m) => $m->to('jane@example.com')->subject('Hi')))
         ->toThrow(TransportException::class, 'Request to the PulseSend API failed. Reason: acme.com is not verified yet.');
+});
+
+it('builds the mailer without a key and only fails when sending', function () {
+    config(['pulsesend.api_key' => null]);
+    app()->forgetInstance(Client::class);
+    app('mail.manager')->forgetMailers();
+
+    expect(Mail::mailer('pulsesend'))->toBeInstanceOf(Mailer::class);
+
+    expect(fn () => Mail::raw('Hello', fn ($m) => $m->to('jane@example.com')->subject('Hi')))
+        ->toThrow(ApiKeyIsMissing::class, 'PULSESEND_API_KEY');
 });

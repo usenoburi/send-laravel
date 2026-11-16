@@ -77,7 +77,9 @@ Event::listen(function (\PulseSend\Laravel\Events\EmailBounced $event) {
 });
 ```
 
-The route sits outside the `web` middleware group, so CSRF doesn't apply.
+The route is registered only once `PULSESEND_WEBHOOK_SECRET` is set (`PULSESEND_ROUTES=false` turns it off, `true` keeps it without a secret). It sits outside the `web` middleware group, so CSRF doesn't apply.
+
+Without `PULSESEND_API_KEY`, the app still boots: only an actual send throws `ApiKeyIsMissing`.
 
 ## License
 
