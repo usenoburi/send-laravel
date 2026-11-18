@@ -1,6 +1,6 @@
 # PulseSend for Laravel
 
-Send your Laravel mail through [PulseSend](https://pulse-send.jiordiviera.me): your Mailables and notifications keep working as they are.
+Send your Laravel mail through [PulseSend](https://send.noburi.space): your Mailables and notifications keep working as they are.
 
 ## Install
 

@@ -2,7 +2,7 @@
     "name": "pulsesend/pulsesend-laravel",
     "description": "PulseSend for Laravel: a mail transport, a facade and webhook events.",
     "keywords": ["pulsesend", "laravel", "mail", "email", "transactional", "webhooks"],
-    "homepage": "https://pulse-send.jiordiviera.me",
+    "homepage": "https://send.noburi.space",
     "license": "MIT",
     "type": "library",
     "require": {
