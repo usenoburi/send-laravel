@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PulseSend\Laravel\Events;
+namespace Noburi\Send\Laravel\Events;
 
 /** Dispatched for the `webhook.test` webhook event. */
-final class WebhookTested extends PulseSendEvent {}
+final class WebhookTested extends NoburiSendEvent {}

@@ -7,18 +7,18 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
-use PulseSend\Client;
-use PulseSend\Laravel\Tests\TestCase;
+use Noburi\Send\Client;
+use Noburi\Send\Laravel\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);
 
 /**
- * Bind a PulseSend client whose HTTP calls answer with $responses.
+ * Bind a Noburi Send client whose HTTP calls answer with $responses.
  * Returns an ArrayObject filled with the requests sent.
  *
  * @param  list<Response>  $responses
  */
-function fakePulseSend(array $responses): ArrayObject
+function fakeNoburiSend(array $responses): ArrayObject
 {
     $history = new ArrayObject;
     $stack = HandlerStack::create(new MockHandler($responses));

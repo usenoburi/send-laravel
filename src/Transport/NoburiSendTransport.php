@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PulseSend\Laravel\Transport;
+namespace Noburi\Send\Laravel\Transport;
 
 use Closure;
-use PulseSend\Client;
-use PulseSend\Exception\PulseSendException;
+use Noburi\Send\Client;
+use Noburi\Send\Exception\NoburiSendException;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Header\TagHeader;
@@ -21,24 +21,24 @@ use Symfony\Component\Mime\MessageConverter;
  * Sends Laravel mail through POST /api/v1/emails. Only what Laravel already
  * gives is read: addresses, subject, bodies, attachments, headers and tags.
  */
-class PulseSendTransport extends AbstractTransport
+class NoburiSendTransport extends AbstractTransport
 {
     /** Headers the API sets itself, or that this transport reads instead of forwarding. */
     private const BYPASSED_HEADERS = [
         'from', 'to', 'cc', 'bcc', 'subject', 'reply-to', 'sender', 'return-path', 'message-id', 'date',
         'mime-version', 'content-type', 'content-transfer-encoding', 'content-disposition', 'dkim-signature', 'received',
-        'x-tag', 'pulsesend-idempotency-key',
+        'x-tag', 'noburi-send-idempotency-key', 'pulsesend-idempotency-key',
     ];
 
     /**
      * The client is resolved at the first send, so an app without a key can
-     * still build its mailers: only an actual send needs PULSESEND_API_KEY.
+     * still build its mailers: only an actual send needs NOBURI_SEND_API_KEY.
      *
-     * @param  Client|Closure(): Client  $pulsesend
+     * @param  Client|Closure(): Client  $client
      * @param  array<string, mixed>  $config
      */
     public function __construct(
-        protected Client|Closure $pulsesend,
+        protected Client|Closure $client,
         protected array $config = [],
     ) {
         parent::__construct();
@@ -46,11 +46,11 @@ class PulseSendTransport extends AbstractTransport
 
     protected function client(): Client
     {
-        if ($this->pulsesend instanceof Closure) {
-            $this->pulsesend = ($this->pulsesend)();
+        if ($this->client instanceof Closure) {
+            $this->client = ($this->client)();
         }
 
-        return $this->pulsesend;
+        return $this->client;
     }
 
     protected function doSend(SentMessage $message): void
@@ -76,8 +76,12 @@ class PulseSendTransport extends AbstractTransport
         }
 
         $options = [];
-        if ($email->getHeaders()->has('PulseSend-Idempotency-Key')) {
-            $options['idempotency_key'] = $email->getHeaders()->get('PulseSend-Idempotency-Key')?->getBodyAsString();
+        // PulseSend-Idempotency-Key: the header's name in pulsesend/pulsesend-laravel, still read.
+        foreach (['Noburi-Send-Idempotency-Key', 'PulseSend-Idempotency-Key'] as $name) {
+            if ($email->getHeaders()->has($name)) {
+                $options['idempotency_key'] = $email->getHeaders()->get($name)?->getBodyAsString();
+                break;
+            }
         }
 
         $payload = array_filter([
@@ -98,9 +102,9 @@ class PulseSendTransport extends AbstractTransport
 
         try {
             $result = $client->emails->send($payload, $options);
-        } catch (PulseSendException $exception) {
+        } catch (NoburiSendException $exception) {
             throw new TransportException(
-                sprintf('Request to the PulseSend API failed. Reason: %s', $exception->getMessage()),
+                sprintf('Request to the Noburi Send API failed. Reason: %s', $exception->getMessage()),
                 is_int($exception->getCode()) ? $exception->getCode() : 0,
                 $exception,
             );
@@ -108,7 +112,7 @@ class PulseSendTransport extends AbstractTransport
 
         $id = $result['id'] ?? null;
         if (! is_string($id) || $id === '') {
-            throw new TransportException('Request to the PulseSend API failed. Reason: the answer has no email id.');
+            throw new TransportException('Request to the Noburi Send API failed. Reason: the answer has no email id.');
         }
 
         $original = $message->getOriginalMessage();
@@ -190,6 +194,6 @@ class PulseSendTransport extends AbstractTransport
 
     public function __toString(): string
     {
-        return 'pulsesend';
+        return 'noburi-send';
     }
 }

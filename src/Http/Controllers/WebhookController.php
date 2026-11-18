@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace PulseSend\Laravel\Http\Controllers;
+namespace Noburi\Send\Laravel\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
-use PulseSend\Laravel\Events;
-use PulseSend\Laravel\Http\Middleware\VerifyWebhookSignature;
-use PulseSend\Webhook;
+use Noburi\Send\Laravel\Events;
+use Noburi\Send\Laravel\Http\Middleware\VerifyWebhookSignature;
+use Noburi\Send\Webhook;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Turns each PulseSend webhook call into a Laravel event: `email.delivered`
+ * Turns each Noburi Send webhook call into a Laravel event: `email.delivered`
  * dispatches EmailDelivered. Extend it and add a handle{Type} method
  * (handleEmailDelivered) to take over one type.
  */
 class WebhookController extends Controller
 {
-    /** @var array<string, class-string<Events\PulseSendEvent>> */
+    /** @var array<string, class-string<Events\NoburiSendEvent>> */
     protected array $events = [
         'email.queued' => Events\EmailQueued::class,
         'email.sent' => Events\EmailSent::class,
@@ -36,7 +36,7 @@ class WebhookController extends Controller
 
     public function __construct()
     {
-        if (config('pulsesend.webhook.secret')) {
+        if (config('noburi-send.webhook.secret')) {
             $this->middleware(VerifyWebhookSignature::class);
         }
     }
@@ -79,7 +79,7 @@ class WebhookController extends Controller
     }
 
     /**
-     * An event type this version doesn't know yet: answered 200 so PulseSend doesn't retry it.
+     * An event type this version doesn't know yet: answered 200 so Noburi Send doesn't retry it.
      *
      * @param  array<string, mixed>  $parameters
      */

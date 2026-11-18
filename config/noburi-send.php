@@ -1,34 +1,37 @@
 <?php
 
+// The PULSESEND_* variables of pulsesend/pulsesend-laravel are still read when
+// the NOBURI_SEND_* ones are missing, so an app can switch packages first.
+
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | PulseSend API Key
+    | Noburi Send API Key
     |--------------------------------------------------------------------------
     |
-    | The key used by the mail transport and the PulseSend facade. Create one
-    | in the PulseSend dashboard, under API keys. A ps_test_ key accepts every
+    | The key used by the mail transport and the Noburi Send facade. Create one
+    | in the Noburi Send dashboard, under API keys. A ps_test_ key accepts every
     | call but delivers nothing, which suits local and CI environments.
     |
     */
 
-    'api_key' => env('PULSESEND_API_KEY'),
+    'api_key' => env('NOBURI_SEND_API_KEY', env('PULSESEND_API_KEY')),
 
     /*
     |--------------------------------------------------------------------------
-    | PulseSend Base URL
+    | Noburi Send Base URL
     |--------------------------------------------------------------------------
     |
-    | Where the API lives. Leave it empty to use the public PulseSend API.
+    | Where the API lives. Leave it empty to use the public Noburi Send API.
     |
     */
 
-    'base_url' => env('PULSESEND_BASE_URL'),
+    'base_url' => env('NOBURI_SEND_BASE_URL', env('PULSESEND_BASE_URL')),
 
     /*
     |--------------------------------------------------------------------------
-    | PulseSend Routes
+    | Noburi Send Routes
     |--------------------------------------------------------------------------
     |
     | Whether the package registers its webhook route. By default (null) it
@@ -37,11 +40,11 @@ return [
     |
     */
 
-    'routes' => env('PULSESEND_ROUTES'),
+    'routes' => env('NOBURI_SEND_ROUTES', env('PULSESEND_ROUTES')),
 
     /*
     |--------------------------------------------------------------------------
-    | PulseSend Domain
+    | Noburi Send Domain
     |--------------------------------------------------------------------------
     |
     | This is the subdomain where the package routes will be accessible from.
@@ -50,23 +53,23 @@ return [
     |
     */
 
-    'domain' => env('PULSESEND_DOMAIN'),
+    'domain' => env('NOBURI_SEND_DOMAIN', env('PULSESEND_DOMAIN')),
 
     /*
     |--------------------------------------------------------------------------
-    | PulseSend Path
+    | Noburi Send Path
     |--------------------------------------------------------------------------
     |
     | This is the base URI path where the package routes, such as the webhook
-    | handler, will be available from: POST /pulsesend/webhook by default.
+    | handler, will be available from: POST /noburi-send/webhook by default.
     |
     */
 
-    'path' => env('PULSESEND_PATH', 'pulsesend'),
+    'path' => env('NOBURI_SEND_PATH', env('PULSESEND_PATH', 'noburi-send')),
 
     /*
     |--------------------------------------------------------------------------
-    | PulseSend Webhooks
+    | Noburi Send Webhooks
     |--------------------------------------------------------------------------
     |
     | The signing secret of your webhook endpoint, shown in the dashboard when
@@ -76,8 +79,8 @@ return [
     */
 
     'webhook' => [
-        'secret' => env('PULSESEND_WEBHOOK_SECRET'),
-        'tolerance' => env('PULSESEND_WEBHOOK_TOLERANCE', 300),
+        'secret' => env('NOBURI_SEND_WEBHOOK_SECRET', env('PULSESEND_WEBHOOK_SECRET')),
+        'tolerance' => env('NOBURI_SEND_WEBHOOK_TOLERANCE', env('PULSESEND_WEBHOOK_TOLERANCE', 300)),
     ],
 
     /*

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PulseSend\Laravel\Http\Middleware;
+namespace Noburi\Send\Laravel\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use PulseSend\Webhook;
+use Noburi\Send\Webhook;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -20,12 +20,12 @@ final class VerifyWebhookSignature
         $verified = Webhook::verify(
             $request->getContent(),
             $request->header(Webhook::SIGNATURE_HEADER),
-            (string) config('pulsesend.webhook.secret'),
-            (int) config('pulsesend.webhook.tolerance', Webhook::DEFAULT_TOLERANCE),
+            (string) config('noburi-send.webhook.secret'),
+            (int) config('noburi-send.webhook.tolerance', Webhook::DEFAULT_TOLERANCE),
         );
 
         if (! $verified) {
-            throw new AccessDeniedHttpException('Invalid PulseSend webhook signature.');
+            throw new AccessDeniedHttpException('Invalid Noburi Send webhook signature.');
         }
 
         return $next($request);

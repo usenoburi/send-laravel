@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace PulseSend\Laravel\Events;
+namespace Noburi\Send\Laravel\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
- * A webhook call from PulseSend. `payload` is the decoded body:
+ * A webhook call from Noburi Send. `payload` is the decoded body:
  * { id, type, created_at, data: { email_id, status, ... } }.
  */
-abstract class PulseSendEvent
+abstract class NoburiSendEvent
 {
     use Dispatchable;
 

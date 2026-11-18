@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PulseSend\Laravel\Events;
+namespace Noburi\Send\Laravel\Events;
 
 /** Dispatched for the `email.complained` webhook event. */
-final class EmailComplained extends PulseSendEvent {}
+final class EmailComplained extends NoburiSendEvent {}

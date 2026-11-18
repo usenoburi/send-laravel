@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Event;
-use PulseSend\Laravel\Events\EmailBounced;
-use PulseSend\Laravel\Events\EmailDelivered;
-use PulseSend\Laravel\Events\WebhookReceived;
-use PulseSend\Laravel\Tests\TestCase;
-use PulseSend\Webhook;
+use Noburi\Send\Laravel\Events\EmailBounced;
+use Noburi\Send\Laravel\Events\EmailDelivered;
+use Noburi\Send\Laravel\Events\WebhookReceived;
+use Noburi\Send\Laravel\Tests\TestCase;
+use Noburi\Send\Webhook;
 
 function callWebhook(string $body, ?string $signature = null)
 {
@@ -16,7 +16,7 @@ function callWebhook(string $body, ?string $signature = null)
         $server['HTTP_X_PULSESEND_SIGNATURE'] = $signature;
     }
 
-    return test()->call('POST', '/pulsesend/webhook', [], [], [], $server, $body);
+    return test()->call('POST', '/noburi-send/webhook', [], [], [], $server, $body);
 }
 
 $body = json_encode(['id' => 'evt_1', 'type' => 'email.delivered', 'created_at' => '2026-11-16T10:00:00Z', 'data' => ['email_id' => 'em_1', 'status' => 'delivered']]);
@@ -32,7 +32,7 @@ it('dispatches a Laravel event for each event type', function () use ($body) {
 });
 
 it('checks the signature when a secret is set', function () use ($body) {
-    config(['pulsesend.webhook.secret' => 'whsec_test']);
+    config(['noburi-send.webhook.secret' => 'whsec_test']);
     Event::fake();
 
     callWebhook($body)->assertForbidden();
@@ -78,5 +78,5 @@ it('can be turned off even with a secret', function () {
 });
 
 it('sits under the configured path and outside CSRF', function () {
-    expect(route('pulsesend.webhook', absolute: false))->toBe('/pulsesend/webhook');
+    expect(route('noburi-send.webhook', absolute: false))->toBe('/noburi-send/webhook');
 });

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace PulseSend\Laravel\Tests;
+namespace Noburi\Send\Laravel\Tests;
 
+use Noburi\Send\Laravel\NoburiSendServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
-use PulseSend\Laravel\PulseSendServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
@@ -23,16 +23,16 @@ abstract class TestCase extends Orchestra
 
     protected function getPackageProviders($app): array
     {
-        return [PulseSendServiceProvider::class];
+        return [NoburiSendServiceProvider::class];
     }
 
     protected function defineEnvironment($app): void
     {
-        $app['config']->set('pulsesend.api_key', 'ps_test_key');
-        $app['config']->set('pulsesend.routes', self::$routes);
-        $app['config']->set('pulsesend.webhook.secret', self::$webhookSecret);
-        $app['config']->set('mail.default', 'pulsesend');
-        $app['config']->set('mail.mailers.pulsesend', ['transport' => 'pulsesend']);
+        $app['config']->set('noburi-send.api_key', 'ps_test_key');
+        $app['config']->set('noburi-send.routes', self::$routes);
+        $app['config']->set('noburi-send.webhook.secret', self::$webhookSecret);
+        $app['config']->set('mail.default', 'noburi-send');
+        $app['config']->set('mail.mailers.noburi-send', ['transport' => 'noburi-send']);
         $app['config']->set('mail.from', ['address' => 'hello@acme.com', 'name' => 'Acme']);
     }
 }
